@@ -10,6 +10,13 @@ import { FaArrowsToDot, FaNewspaper } from "react-icons/fa6";
 import { clsx } from "clsx";
 import { PRIOTITYSTYELS, TASK_TYPE, TASK_TYPE_COLOR } from "../utils";
 import moment from "moment";
+import { useEffect, useState } from "react";
+import { unstable_HistoryRouter, useNavigate } from "react-router-dom";
+import Loading from "../components/Loading/Loading";
+import axios from "../services/axiosConfig";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/slices/authSlice";
 
 const TaskTable = ({ tasks }) => {
   const ICONS = {
@@ -82,6 +89,37 @@ const TaskTable = ({ tasks }) => {
 
 const Dashboard = () => {
   const totals = summary.tasks;
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Token is missing. Please log in.");
+      dispatch(logout());
+      //navigate("/login");
+      return;
+    }
+
+    axios
+      .post("/validate-token", { token })
+      .then((response) => {
+        if (response.data.valid) {
+          setLoading(false);
+        } else {
+          toast.error(response.data.message || "Invalid token. Please log in.");
+          dispatch(logout());
+          // navigate("/login");
+        }
+      })
+      .catch((error) => {
+        console.error("Token validation error:", error);
+        toast.error("Invalid token. Please log in.");
+        dispatch(logout());
+        //navigate("/login");
+      });
+  }, [token]);
 
   const stats = [
     {
@@ -136,9 +174,19 @@ const Dashboard = () => {
       </div>
     );
   };
+
+  //Loader
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
     <div className="h-full py-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map(({ icon, bg, label, total }, index) => (
           <Card key={index} icon={icon} bg={bg} label={label} count={total} />
         ))}

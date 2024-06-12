@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner/Spinner";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { setCredentials } from "../redux/slices/authSlice";
 import axios from "../services/axiosConfig";
+import { toast } from "sonner";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
@@ -17,20 +18,24 @@ const Login = () => {
   } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const submitHanndler = async (data) => {
     try {
       console.log(data);
 
       const response = await axios.post("/login", data);
-      console.log(response.headers["auth-token"]);
-      const token = response.headers["authorization"]; // Assuming token is in the 'authorization' header
-      console.log(`Token is ${token}`);
+      console.log(response.headers["authorization"]);
+      const token = response.headers["authorization"];
+      console.log(token);
+      // Assuming token is in the 'authorization' header
+      console.log(response.data.user);
       if (token && response.status === 200) {
         localStorage.setItem("token", token);
-        alert("Login successful");
-        dispatch(setCredentials(data));
-        navigate("/dashboard");
+        toast.success("Login successful");
+        dispatch(setCredentials(response.data.user));
+        console.log(user);
+        //navigate("/dashboard");
       } else {
         alert("Token not found in response");
       }
@@ -40,8 +45,11 @@ const Login = () => {
   };
 
   useEffect(() => {
+    if (location.state?.message) {
+      toast.error(location.state.message);
+    }
     user && navigate("/dashboard");
-  }, [user]);
+  }, [user, location]);
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center flex-col lg:flex-row bg-[#f3f4f6]">

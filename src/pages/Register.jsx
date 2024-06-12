@@ -5,6 +5,7 @@ import AzureTaskManager from "../components/AzureTaskManager";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import axios from "../services/axiosConfig";
+import { toast } from "sonner";
 
 const Register = () => {
   const { isRegistered, setIsRegistered } = useState(false);
@@ -28,7 +29,8 @@ const Register = () => {
       if (response.status === 200) {
         navigate("/login");
       }
-      alert(response.data.message);
+      // alert(response.data.message);
+      toast.success(response.data.message);
     } catch (error) {
       console.error("Registration failed:", error);
     }
