@@ -9,7 +9,6 @@ import {
 import { FaTasks } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { IoClose } from "react-icons/io5";
 
 import clsx from "clsx";
 import { setOpenSidebar } from "../redux/slices/authSlice";

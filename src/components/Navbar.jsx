@@ -2,6 +2,7 @@ import React from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenSidebar } from "../redux/slices/authSlice";
+import UserAvatar from "./UserAvatar";
 
 // import UserAvatar from "./UserAvatar";
 // import NotificationPanel from "./NotificationPanel";
@@ -23,7 +24,7 @@ const Navbar = () => {
           ☰
         </button>
 
-        <div className="w-64 2xl:w-[400px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
+        <div className=" w-48 md:w-72 2xl:w-[400px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
           <MdOutlineSearch className="text-gray-500 text-xl" />
 
           <input
@@ -37,7 +38,7 @@ const Navbar = () => {
       <div className="flex gap-2 items-center">
         {/* <NotificationPanel /> */}
 
-        {/* <UserAvatar /> */}
+        <UserAvatar />
       </div>
     </div>
   );

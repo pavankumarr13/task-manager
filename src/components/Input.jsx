@@ -20,7 +20,7 @@ const Input = React.forwardRef(
             {...register}
             aria-invalid={error ? "true" : "false"}
             className={clsx(
-              "bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300",
+              "bg-transparent px-3 py-1.5 2xl:py-2 border border-gray-300 placeholder-sm text-sm placeholder-gray-400 text-gray-900 outline-none  focus:ring-2 ring-blue-300",
               className
             )}
           />

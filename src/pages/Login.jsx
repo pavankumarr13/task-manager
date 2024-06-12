@@ -4,7 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner/Spinner";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setCredentials } from "../redux/slices/authSlice";
+import axios from "../services/axiosConfig";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
@@ -14,9 +16,27 @@ const Login = () => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const submitHanndler = async (data) => {
-    console.log(user);
+    try {
+      console.log(data);
+
+      const response = await axios.post("/login", data);
+      console.log(response.headers["auth-token"]);
+      const token = response.headers["authorization"]; // Assuming token is in the 'authorization' header
+      console.log(`Token is ${token}`);
+      if (token && response.status === 200) {
+        localStorage.setItem("token", token);
+        alert("Login successful");
+        dispatch(setCredentials(data));
+        navigate("/dashboard");
+      } else {
+        alert("Token not found in response");
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AzureTaskManager from "../components/AzureTaskManager";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import axios from "../services/axiosConfig";
 
 const Register = () => {
   const { isRegistered, setIsRegistered } = useState(false);
@@ -17,7 +18,20 @@ const Register = () => {
   const password = watch("password");
 
   const submitHanndler = async (data) => {
-    console.log(user);
+    try {
+      console.log(data);
+      const response = await axios.post("/register", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        navigate("/login");
+      }
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
   return (
     <div className="w-full min-h-screen flex items-center justify-center flex-col lg:flex-row bg-[#f3f4f6]">
@@ -28,7 +42,7 @@ const Register = () => {
         <div className="w-full md:w-1/2 p-4 md:p-1 flex flex-col items-center justify-center">
           <form
             onSubmit={handleSubmit(submitHanndler)}
-            className="form-container w-full md:w-[400px] flex flex-col gap-y-8 px-10 pt-14 pb-14"
+            className="form-container w-full md:w-[400px] flex flex-col gap-y-5 px-10 pt-14 pb-14"
           >
             <div>
               <p className="text-center text-2xl text-green-600 font-bold">
@@ -38,7 +52,18 @@ const Register = () => {
                 Please fill the credentials to register
               </p>
             </div>
-            <div className="flex flex-col gap-y-5">
+            <div className="flex flex-col gap-y-3">
+              <Input
+                placeholder="username"
+                type="text"
+                name="username"
+                label="Username"
+                className="w-full rounded-full"
+                register={register("username", {
+                  required: "Username is required!",
+                })}
+                error={errors.username ? errors.username.message : ""}
+              />
               <Input
                 placeholder="email@example.com"
                 type="email"
@@ -64,8 +89,8 @@ const Register = () => {
               <Input
                 placeholder="confirm password"
                 type="password"
-                name="password"
-                label="Password"
+                name="confirmPassword"
+                label="Confirm Password"
                 className="w-full rounded-full"
                 register={register("confirmPassword", {
                   required: "Confirm Password is required!",
