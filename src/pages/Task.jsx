@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../components/Loading/Loading";
 import { TASK_TYPE } from "../utils";
@@ -9,17 +9,25 @@ import { IoMdAdd } from "react-icons/io";
 import BoardView from "../components/BoardView";
 import Table from "../components/task/Table";
 import Toggle from "../components/Toggle/Toggle";
+import TaskForm from "../components/TaskForm";
 
 const Task = () => {
   const params = useParams();
 
   const [selected, setSelected] = useState("list");
+  const [showForm, setShowForm] = useState(false); // sanjay
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleToggle = (e) => {
     setSelected(e.target.value);
   };
 
+  //sanjay
+  const handleAddTask = (task) => {
+    setTasks([...tasks, task]);
+  };
+
+  //pk
   const status = params?.status || "";
 
   return loading ? (
@@ -39,7 +47,10 @@ const Task = () => {
 
         {!status && (
           <Button
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setOpen(true);
+              setShowForm(true);
+            }}
             label="Create Task"
             icon={<IoMdAdd className="text-lg" />}
             className="flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md px-3 py-2 2xl:py-2.5"
@@ -67,6 +78,12 @@ const Task = () => {
           </div>
         )}
       </Tabs> */}
+
+      {/* {sanjay} */}
+      {showForm && (
+        <TaskForm addTask={handleAddTask} setShowForm={setShowForm} />
+      )}
+
       {selected !== "list" ? (
         <BoardView tasks={tasks} />
       ) : (
