@@ -52,7 +52,7 @@ const TaskModal = ({ open, onClose, added }) => {
   return ReactDOM.createPortal(
     <div>
       <div className="fixed top-0 right-0 left-0 bottom-0 z-[1000] bg-[rgba(0,0,0,0.7)]"></div>
-      <div className="absolute top-2/3 md:top-[60%] right-1/2 translate-x-1/2     -translate-y-1/2 md:-translate-y-[60%] bg-white w-[300px] md:w-[450px] flex justify-center items-center p-4 rounded-sm z-[1000] overflow-y-auto">
+      <div className="absolute top-2/3 md:top-[60%] right-1/2 translate-x-1/2     -translate-y-1/2 md:-translate-y-[60%]  bg-white w-[300px] md:w-[450px] flex justify-center items-center p-4 rounded-sm z-[1000] overflow-y-auto">
         {/* <MdClose
           className="absolute top-0 text-black right-0 p-2 border-1 rounded-sm font-bold cursor-pointer"
           onClick={onClose}
