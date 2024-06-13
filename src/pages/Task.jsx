@@ -11,6 +11,7 @@ import axios from "../services/axiosConfig";
 import { toast } from "sonner";
 import TaskModal from "../components/TaskModal";
 import { useSelector } from "react-redux";
+import NoTaskComponent from "../components/NoTaskComponent";
 
 const Task = () => {
   const { user } = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [selected, setSelected] = useState("list");
   const [showForm, setShowForm] = useState(false); // sanjay
+  const [EditForm, setEditForm] = useState(false); // to open edit form
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [reloadTasks, setReloadTasks] = useState(false); // for deleting task
@@ -73,14 +75,16 @@ const Task = () => {
         setLoading(false);
         setReloadTasks(false);
         setAdded(false);
+        setEditForm(false);
       })
       .catch((error) => {
         console.error("Error fetching tasks:", error);
         setLoading(false);
         setReloadTasks(false);
         setAdded(false);
+        setEditForm(false);
       });
-  }, [reloadTasks, status, added]);
+  }, [reloadTasks, status, added, EditForm]);
 
   //pk
   console.log(tasks);
@@ -96,6 +100,14 @@ const Task = () => {
       return tasks;
     }
   };
+
+  if (tasks.length === 0) {
+    return (
+      <div className="w-full h-full mt-32 justify-center items-center">
+        <NoTaskComponent />
+      </div>
+    );
+  }
 
   return loading ? (
     <div className="py-10">
@@ -140,12 +152,14 @@ const Task = () => {
         <BoardView
           tasks={tasks}
           onTaskDelete={() => setReloadTasks(!reloadTasks)}
+          onTaskUpdate={() => setEditForm(!EditForm)}
         />
       ) : (
         <div className="w-full">
           <Table
             tasks={tasks}
             onTaskDelete={() => setReloadTasks(!reloadTasks)}
+            onTaskUpdate={() => setEditForm(!EditForm)}
           />
         </div>
       )}

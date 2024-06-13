@@ -1,11 +1,5 @@
 import clsx from "clsx";
-import {
-  MdDelete,
-  MdEdit,
-  MdKeyboardArrowDown,
-  MdKeyboardArrowUp,
-  MdKeyboardDoubleArrowUp,
-} from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
 import { TASK_TYPE, TASK_TYPE_COLOR } from "../../utils";
 import { FaEye } from "react-icons/fa6";
 import Button from "../Button";
@@ -14,15 +8,15 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import EditModel from "../EditModel";
+import ViewTaskDetails from "../ViewTaskDetails";
+import { set } from "react-hook-form";
 
-const Table = ({ tasks, onTaskDelete }) => {
-  // const ICONS = {
-  //   high: <MdKeyboardDoubleArrowUp />,
-  //   medium: <MdKeyboardArrowUp />,
-  //   low: <MdKeyboardArrowDown />,
-  // };
-
+const Table = ({ tasks, onTaskDelete, onTaskUpdate }) => {
   console.log(tasks);
+  const [showEditForm, setShowEditForm] = useState(false); // to open edit form
+  const [showViewForm, setShowViewForm] = useState(false); // to open view form
+  const [editTask, setEditTask] = useState(null);
 
   const TableHeader = () => (
     <thead className="border-b border-gray-300 ">
@@ -33,7 +27,6 @@ const Table = ({ tasks, onTaskDelete }) => {
         <th className="py-2  md:visible text-center md:text-center">
           Operations
         </th>
-        {/* <th className="py-2 ">Due date</th> */}
       </tr>
     </thead>
   );
@@ -97,13 +90,19 @@ const Table = ({ tasks, onTaskDelete }) => {
         <td className="p-2 flex justify-center my-auto items-center md:table-cell md:align-middle md:text-center">
           <div className="flex  gap-1 justify-end sm:justify-center">
             <Button
-              onClick={() => {}}
+              onClick={() => {
+                setShowViewForm(true);
+                setEditTask(props);
+              }}
               label=""
               icon={<FaEye className="text-xs" />}
               className="flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md px-2 py-1 2xl:py-2"
             />
             <Button
-              onClick={() => {}}
+              onClick={() => {
+                setShowEditForm(true);
+                setEditTask(props);
+              }}
               label=""
               icon={<MdEdit className="text-xs" />}
               className="flex flex-row-reverse gap-1 items-center bg-yellow-600 text-white rounded-md px-2 py-1 2xl:py-2"
@@ -119,9 +118,6 @@ const Table = ({ tasks, onTaskDelete }) => {
             />
           </div>
         </td>
-        {/* <td className="py-2 hidden md:inline-block">
-        <span className="text-base text-gray-600">1 week left</span>
-      </td> */}
       </tr>
     );
   };
@@ -145,6 +141,31 @@ const Table = ({ tasks, onTaskDelete }) => {
           </tbody>
         </table>
       </div>
+      {editTask && showEditForm && (
+        <EditModel
+          title={editTask.title}
+          description={editTask.description}
+          due={editTask.due}
+          stage={editTask.stage}
+          id={editTask.id}
+          onClose={() => {
+            setEditTask(null);
+            setShowEditForm(false);
+          }}
+          onTaskUpdate={onTaskUpdate}
+        />
+      )}
+      {showViewForm && (
+        <ViewTaskDetails
+          title={editTask.title}
+          description={editTask.description}
+          due={editTask.due}
+          stage={editTask.stage}
+          onClose={() => {
+            setShowViewForm(false);
+          }}
+        />
+      )}
     </>
   );
 };

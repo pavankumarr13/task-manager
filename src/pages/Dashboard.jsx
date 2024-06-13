@@ -18,11 +18,16 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import TASKS_FOR_DASHBOARD from "./Task";
+import NoTaskComponent from "../components/NoTaskComponent";
 
 const TaskTable = ({ tasks }) => {
   // if in case there is no task to show
   if (!tasks.length) {
-    return <div>No tasks available.</div>;
+    return (
+      <div className="w-full h-full mt-3 md:mt-20  justify-center items-center">
+        <NoTaskComponent />
+      </div>
+    );
   }
 
   const ICONS = {
