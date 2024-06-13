@@ -15,10 +15,16 @@ import { unstable_HistoryRouter, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading/Loading";
 import axios from "../services/axiosConfig";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
+import TASKS_FOR_DASHBOARD from "./Task";
 
 const TaskTable = ({ tasks }) => {
+  // if in case there is no task to show
+  if (!tasks.length) {
+    return <div>No tasks available.</div>;
+  }
+
   const ICONS = {
     high: <MdKeyboardDoubleArrowUp />,
     medium: <MdKeyboardArrowUp />,
@@ -63,7 +69,7 @@ const TaskTable = ({ tasks }) => {
       </td>
 
       <td className="py-2 hidden md:inline-block">
-        <span className="text-base text-red-400">1 week left</span>
+        <span className="text-base text-red-400">{task?.due}</span>
       </td>
 
       {/* <td className="py-2 hidden md:inline-block">
@@ -88,11 +94,18 @@ const TaskTable = ({ tasks }) => {
 };
 
 const Dashboard = () => {
-  const totals = summary.tasks;
+  const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
+  const { user } = useSelector((state) => state.auth);
+  const [stats, setStats] = useState({
+    totalTasks: 0,
+    completed: 0,
+    inProgress: 0,
+    todo: 0,
+  });
 
   useEffect(() => {
     if (!token) {
@@ -107,6 +120,7 @@ const Dashboard = () => {
       .then((response) => {
         if (response.data.valid) {
           setLoading(false);
+          fetchTasks();
         } else {
           toast.error(response.data.message || "Invalid token. Please log in.");
           dispatch(logout());
@@ -120,35 +134,75 @@ const Dashboard = () => {
         //navigate("/login");
       });
   }, [token]);
+  //fetch task here
+  const fetchTasks = () => {
+    const token = localStorage.getItem("token");
+    const email = user.email;
+    // setLoading(true);
+    axios
+      .get("/task/", {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+          email: email,
+        },
+      })
+      .then((res) => {
+        setTasks(res.data.message);
+        calculateStats(res.data.message);
+        // setLoading(false);
+        // setAdded(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+        // setLoading(false);
+        // setAdded(false);
+      });
+  };
 
-  const stats = [
+  const calculateStats = (tasks) => {
+    const totalTasks = tasks.length;
+    const completed = tasks.filter((task) => task.stage === "completed").length;
+    const inProgress = tasks.filter(
+      (task) => task.stage === "in-progress"
+    ).length;
+    const todo = tasks.filter((task) => task.stage === "todo").length;
+
+    setStats({
+      totalTasks,
+      completed,
+      inProgress,
+      todo,
+    });
+  };
+  const designStats = [
     {
       _id: "1",
       label: "TOTAL TASK",
-      total: summary?.totalTasks || 0,
+      total: stats.totalTasks || 0,
       icon: <FaNewspaper />,
       bg: "bg-[#1d4ed8]",
     },
     {
       _id: "2",
-      label: "COMPLTED TASK",
-      total: totals["completed"] || 0,
+      label: "COMPLETED TASK",
+      total: stats.completed || 0,
       icon: <MdAdminPanelSettings />,
       bg: "bg-[#0f766e]",
     },
     {
       _id: "3",
-      label: "TASK IN PROGRESS ",
-      total: totals["in progress"] || 0,
+      label: "TASK IN PROGRESS",
+      total: stats.inProgress || 0,
       icon: <LuClipboardEdit />,
       bg: "bg-[#f59e0b]",
     },
     {
       _id: "4",
       label: "TODOS",
-      total: totals["todo"],
+      total: stats.todo || 0,
       icon: <FaArrowsToDot />,
-      bg: "bg-[#be185d]" || 0,
+      bg: "bg-[#be185d]",
     },
   ];
 
@@ -187,13 +241,13 @@ const Dashboard = () => {
   return (
     <div className="h-full py-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {stats.map(({ icon, bg, label, total }, index) => (
+        {designStats.map(({ icon, bg, label, total }, index) => (
           <Card key={index} icon={icon} bg={bg} label={label} count={total} />
         ))}
       </div>
 
       <div className="w-full flex flex-col md:flex-row gap-4 2xl:gap-10 py-8">
-        <TaskTable className="flex-1" tasks={summary.last10Task} />
+        <TaskTable className="flex-1" tasks={tasks} />
       </div>
     </div>
   );

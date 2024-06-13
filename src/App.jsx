@@ -13,6 +13,7 @@ import { IoClose } from "react-icons/io5";
 import clsx from "clsx";
 import Navbar from "./components/Navbar";
 import { setOpenSidebar } from "./redux/slices/authSlice";
+import Footer from "./components/Footer/Footer";
 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
@@ -24,12 +25,13 @@ function Layout() {
         <Sidebar />
       </div>
 
-      <MobileSidebar />
-      <div className="flex-1 overflow-y-auto">
+      <MobileSidebar className="z-10" />
+      <div className="flex-1 overflow-y-auto z-0">
         <Navbar />
         <div className="p-4 2xl:px-10">
           <Outlet />
         </div>
+        <Footer className="w-2/3 md:w-3/4 z-[1]" />
       </div>
     </div>
   ) : (
@@ -65,7 +67,7 @@ const MobileSidebar = () => {
               mobileMenuRef.current = node;
             }}
             className={clsx(
-              "md:hidden w-full h-full bg-black/40 transition-all duration-700 transform ",
+              "md:hidden w-full h-full bg-black/40 transition-all duration-700 transform z-50",
               isSidebarOpen ? "translate-x-0" : "translate-x-full"
             )}
             onClick={() => {

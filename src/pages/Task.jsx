@@ -13,49 +13,88 @@ import TaskForm from "../components/TaskForm";
 import axios from "../services/axiosConfig";
 import { toast } from "sonner";
 import TaskModal from "../components/TaskModal";
+import { useSelector } from "react-redux";
 
 const Task = () => {
+  const { user } = useSelector((state) => state.auth);
+  const email = user.email;
   const params = useParams();
-
+  const [tasks, setTasks] = useState([]);
   const [selected, setSelected] = useState("list");
   const [showForm, setShowForm] = useState(false); // sanjay
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [added, setAdded] = useState(false);
+  const status = params?.status || "";
   const handleToggle = (e) => {
     setSelected(e.target.value);
   };
 
   //sanjay
-  const handleAddTask = async (data) => {
-    //setTasks([...tasks, task]);
-    console.log(`Task to be added: ${data}`);
-    // setLoading(true);
-    // try {
-    //   console.log(`Task to be added: ${task}`);
-    //   const token = localStorage.getItem("token");
-    //   const response = axios.post("/addTask", task, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       authorization: token,
-    //     },
-    //   });
-    //   if (response.status === 200) {
-    //     toast.success("Task created successfully");
-    //     setLoading(false);
-    //     setOpen(false);
-    //   } else {
-    //     toast.error("Task creation failed");
-    //     setLoading(false);
-    //   }
-    // } catch (error) {
-    //   console.error("Task creation failed:", error);
-    //   toast.error("Task creation failed");
-    //   setLoading(false);
-    // }
-  };
+  // const handleAddTask = async (data) => {
+  //   //setTasks([...tasks, task]);
+  //   console.log(`Task to be added: ${data}`);
+  //   // setLoading(true);
+  //   // try {
+  //   //   console.log(`Task to be added: ${task}`);
+  //   //   const token = localStorage.getItem("token");
+  //   //   const response = axios.post("/addTask", task, {
+  //   //     headers: {
+  //   //       "Content-Type": "application/json",
+  //   //       authorization: token,
+  //   //     },
+  //   //   });
+  //   //   if (response.status === 200) {
+  //   //     toast.success("Task created successfully");
+  //   //     setLoading(false);
+  //   //     setOpen(false);
+  //   //   } else {
+  //   //     toast.error("Task creation failed");
+  //   //     setLoading(false);
+  //   //   }
+  //   // } catch (error) {
+  //   //   console.error("Task creation failed:", error);
+  //   //   toast.error("Task creation failed");
+  //   //   setLoading(false);
+  //   // }
+  // };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setLoading(true);
+    axios
+      .get("/task/", {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+          email: email,
+        },
+      })
+      .then((res) => {
+        setTasks(filterTask(status, res.data.message));
+        setLoading(false);
+        setAdded(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+        setLoading(false);
+        setAdded(false);
+      });
+  }, [added, status]);
 
   //pk
-  const status = params?.status || "";
+  console.log(`status: ${status}`);
+  const filterTask = (status, tasks) => {
+    if (status === "completed") {
+      return tasks.filter((task) => task.stage === status);
+    } else if (status === "in progress") {
+      return tasks.filter((task) => task.stage === "in-progress");
+    } else if (status === "todo") {
+      return tasks.filter((task) => task.stage === status);
+    } else {
+      return tasks;
+    }
+  };
 
   return loading ? (
     <div className="py-10">
@@ -86,31 +125,14 @@ const Task = () => {
         )}
       </div>
 
-      {/* <Tabs tabs={TABS} setSelected={setSelected}>
-        {!status && (
-          <div className="w-full flex justify-between gap-4 md:gap-x-12 py-4">
-            <TaskTitle label="To Do" className={TASK_TYPE.todo} />
-            <TaskTitle
-              label="In Progress"
-              className={TASK_TYPE["in progress"]}
-            />
-            <TaskTitle label="completed" className={TASK_TYPE.completed} />
-          </div>
-        )}
-
-        {selected !== 1 ? (
-          <BoardView tasks={tasks} />
-        ) : (
-          <div className="w-full">
-            <Table tasks={tasks} />
-          </div>
-        )}
-      </Tabs> */}
-
       {/* {sanjay} */}
       {showForm && (
         // <TaskForm addTask={handleAddTask} setShowForm={setShowForm} />
-        <TaskModal open={showForm} onClose={() => setShowForm(false)} />
+        <TaskModal
+          open={showForm}
+          onClose={() => setShowForm(false)}
+          added={() => setAdded(true)}
+        />
       )}
 
       {selected !== "list" ? (

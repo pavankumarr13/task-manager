@@ -58,7 +58,7 @@ const Table = ({ tasks }) => {
       </td>
 
       <td className="py-2 hidden md:table-cell">
-        <span className="text-base text-red-400">1 week left</span>
+        <span className="text-base text-red-400">{task?.due}</span>
       </td>
 
       <td className="p-2 flex justify-center my-auto items-center md:table-cell md:align-middle md:text-center">

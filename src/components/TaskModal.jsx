@@ -7,7 +7,7 @@ import axios from "../services/axiosConfig";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
-const TaskModal = ({ open, onClose }) => {
+const TaskModal = ({ open, onClose, added }) => {
   const { user } = useSelector((state) => state.auth);
   const email = user.email;
   const {
@@ -19,6 +19,7 @@ const TaskModal = ({ open, onClose }) => {
   const submitHanndler = async (data) => {
     try {
       console.log(`Task to be added: ${data.category}`);
+      console.log(`due date is ${data.dueDate}`);
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "/task/addTask",
@@ -124,6 +125,7 @@ const TaskModal = ({ open, onClose }) => {
             <button
               type="submit"
               className="w-full h-10 bg-blue-700 text-white rounded-full"
+              onClick={added}
             >
               Add Task
             </button>

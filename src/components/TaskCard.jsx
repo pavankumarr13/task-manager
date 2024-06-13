@@ -33,7 +33,7 @@ const TaskCard = ({ task }) => {
           <h4 className="line-clamp-1 text-black text-base">{task?.title}</h4>
         </div>
         <span className="text-sm text-gray-600 ml-6">
-          {formatDate(new Date(task?.date))}
+          {formatDate(new Date(task?.due))}
         </span>
         <div className="border-t border-gray-300 my-2" />
         <div className="flex mt-2 gap-2 justify-end sm:justify-normal">
