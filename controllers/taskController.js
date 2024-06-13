@@ -68,7 +68,7 @@ export const patchUpdateTask = async (req, res) => {
     const taskId = req.params.id; // Assuming taskId is provided in the request parameters
 
     // Extract fields to update from request body
-    const { title, description, due, stage } = req.body;
+    const { title, description, dueDate, stage } = req.body;
 
     // Check if taskId exists
     const existingTask = await Task.findById(taskId);
@@ -84,8 +84,8 @@ export const patchUpdateTask = async (req, res) => {
     if (description) {
       existingTask.description = description;
     }
-    if (due) {
-      existingTask.due = due;
+    if (dueDate) {
+      existingTask.due = dueDate;
     }
     if (stage) {
       existingTask.stage = stage;
