@@ -14,6 +14,7 @@ import clsx from "clsx";
 import Navbar from "./components/Navbar";
 import { setOpenSidebar } from "./redux/slices/authSlice";
 import Footer from "./components/Footer/Footer";
+import NotFound from "./pages/NotFound/NotFound";
 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
@@ -117,6 +118,7 @@ const App = () => {
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Toaster richColors />

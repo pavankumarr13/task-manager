@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../components/Loading/Loading";
-import { TASK_TYPE } from "../utils";
-import { tasks } from "../assets/data";
 import Title from "../components/Title";
 import Button from "../components/Button";
 import { IoMdAdd } from "react-icons/io";
 import BoardView from "../components/BoardView";
 import Table from "../components/task/Table";
 import Toggle from "../components/Toggle/Toggle";
-import TaskForm from "../components/TaskForm";
 import axios from "../services/axiosConfig";
 import { toast } from "sonner";
 import TaskModal from "../components/TaskModal";
@@ -24,7 +21,8 @@ const Task = () => {
   const [showForm, setShowForm] = useState(false); // sanjay
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [added, setAdded] = useState(false);
+  const [reloadTasks, setReloadTasks] = useState(false); // for deleting task
+  const [added, setAdded] = useState(false); // for adding task
   const status = params?.status || "";
   const handleToggle = (e) => {
     setSelected(e.target.value);
@@ -73,16 +71,19 @@ const Task = () => {
       .then((res) => {
         setTasks(filterTask(status, res.data.message));
         setLoading(false);
+        setReloadTasks(false);
         setAdded(false);
       })
       .catch((error) => {
         console.error("Error fetching tasks:", error);
         setLoading(false);
+        setReloadTasks(false);
         setAdded(false);
       });
-  }, [added, status]);
+  }, [reloadTasks, status, added]);
 
   //pk
+  console.log(tasks);
   console.log(`status: ${status}`);
   const filterTask = (status, tasks) => {
     if (status === "completed") {
@@ -131,15 +132,21 @@ const Task = () => {
         <TaskModal
           open={showForm}
           onClose={() => setShowForm(false)}
-          added={() => setAdded(true)}
+          added={() => setAdded(!added)}
         />
       )}
 
       {selected !== "list" ? (
-        <BoardView tasks={tasks} />
+        <BoardView
+          tasks={tasks}
+          onTaskDelete={() => setReloadTasks(!reloadTasks)}
+        />
       ) : (
         <div className="w-full">
-          <Table tasks={tasks} />
+          <Table
+            tasks={tasks}
+            onTaskDelete={() => setReloadTasks(!reloadTasks)}
+          />
         </div>
       )}
 

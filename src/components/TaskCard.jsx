@@ -4,8 +4,31 @@ import clsx from "clsx";
 import { FaEye } from "react-icons/fa6";
 import Button from "./Button";
 import { MdDelete, MdEdit } from "react-icons/md";
+import axios from "../services/axiosConfig";
+import { toast } from "sonner";
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, onTaskDelete }) => {
+  const token = localStorage.getItem("token");
+  const handleDelete = (id) => {
+    console.log(id);
+    axios
+      .delete(`/task/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        onTaskDelete();
+        // window.location.reload();
+        // navigate("/tasks");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(res.data.message);
+      });
+  };
   return (
     <div className="w-full h-fit bg-white shadow-md p-4 rounded">
       {/* <div className="w-full flex justify-between">
@@ -50,7 +73,7 @@ const TaskCard = ({ task }) => {
             className="flex flex-row-reverse gap-1 items-center bg-yellow-600 text-white rounded-md px-3 sm:px-2 py-2 2xl:py-2.5"
           />
           <Button
-            onClick={() => {}}
+            onClick={() => handleDelete(task._id)}
             label=""
             icon={<MdDelete className="text-lg" />}
             className="flex flex-row-reverse gap-1 items-center bg-red-600 text-white rounded-md px-3 sm:px-2 py-2 2xl:py-2.5"

@@ -36,6 +36,7 @@ const TaskModal = ({ open, onClose, added }) => {
         // setLoading(false);
         // setOpen(false);
         onClose();
+        added();
       } else {
         toast.error("Task creation failed");
         // setLoading(false);
@@ -125,7 +126,6 @@ const TaskModal = ({ open, onClose, added }) => {
             <button
               type="submit"
               className="w-full h-10 bg-blue-700 text-white rounded-full"
-              onClick={added}
             >
               Add Task
             </button>
