@@ -10,6 +10,9 @@ import BoardView from "../components/BoardView";
 import Table from "../components/task/Table";
 import Toggle from "../components/Toggle/Toggle";
 import TaskForm from "../components/TaskForm";
+import axios from "../services/axiosConfig";
+import { toast } from "sonner";
+import TaskModal from "../components/TaskModal";
 
 const Task = () => {
   const params = useParams();
@@ -23,8 +26,32 @@ const Task = () => {
   };
 
   //sanjay
-  const handleAddTask = (task) => {
-    setTasks([...tasks, task]);
+  const handleAddTask = async (data) => {
+    //setTasks([...tasks, task]);
+    console.log(`Task to be added: ${data}`);
+    // setLoading(true);
+    // try {
+    //   console.log(`Task to be added: ${task}`);
+    //   const token = localStorage.getItem("token");
+    //   const response = axios.post("/addTask", task, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       authorization: token,
+    //     },
+    //   });
+    //   if (response.status === 200) {
+    //     toast.success("Task created successfully");
+    //     setLoading(false);
+    //     setOpen(false);
+    //   } else {
+    //     toast.error("Task creation failed");
+    //     setLoading(false);
+    //   }
+    // } catch (error) {
+    //   console.error("Task creation failed:", error);
+    //   toast.error("Task creation failed");
+    //   setLoading(false);
+    // }
   };
 
   //pk
@@ -43,6 +70,7 @@ const Task = () => {
           className="hidden md:block"
           onOptionsChange={handleToggle}
           selected={selected}
+          setLoading={setLoading}
         />
 
         {!status && (
@@ -81,7 +109,8 @@ const Task = () => {
 
       {/* {sanjay} */}
       {showForm && (
-        <TaskForm addTask={handleAddTask} setShowForm={setShowForm} />
+        // <TaskForm addTask={handleAddTask} setShowForm={setShowForm} />
+        <TaskModal open={showForm} onClose={() => setShowForm(false)} />
       )}
 
       {selected !== "list" ? (

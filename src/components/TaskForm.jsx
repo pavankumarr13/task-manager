@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
+import axios from "../services/axiosConfig";
+import { toast } from "sonner";
 
-const TaskForm = ({ addTask, setShowForm }) => {
+const TaskForm = ({ addTask, setShowForm, setLoading }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [status, setStatus] = useState("todo");
+  const [stage, setstage] = useState("todo");
   const [titleError, setTitleError] = useState("");
   const [descError, setDescError] = useState("");
   const [dueDateError, setDueDateError] = useState("");
@@ -19,7 +21,33 @@ const TaskForm = ({ addTask, setShowForm }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const handleSubmit = (e) => {
+  const submitHanndler = async (data) => {
+    try {
+      console.log(`Task to be added: ${data}`);
+      const token = localStorage.getItem("token");
+      const response = await axios.post("/task/addTask", data, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      });
+      if (response.status === 200) {
+        toast.success("Task created successfully");
+        setLoading(false);
+        setOpen(false);
+      } else {
+        toast.error("Task creation failed");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Task creation failed:", error);
+      toast.error("Task creation failed");
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = (e, data) => {
+    console.log("inside handleSubmit");
     e.preventDefault();
     let hasError = false;
     if (!title) {
@@ -43,18 +71,19 @@ const TaskForm = ({ addTask, setShowForm }) => {
     if (hasError) {
       return;
     }
-
-    addTask({ title, description, dueDate, status });
+    // axios req
+    submitHanndler(data);
+    addTask({ title, description, dueDate, stage });
     setTitle("");
     setDescription("");
     setDueDate("");
-    setStatus("todo");
+    setstage("todo");
     setShowForm(false);
   };
 
   return (
     <Modal onClose={() => setShowForm(false)}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={submitHanndler}>
         <h3 className="text-lg font-semibold text-blue-800 mb-2">Task Title</h3>
         <input
           type="text"
@@ -87,10 +116,10 @@ const TaskForm = ({ addTask, setShowForm }) => {
         {dueDateError && (
           <div className="mb-4 text-red-600">{dueDateError}</div>
         )}
-        <h3 className="text-lg font-semibold text-blue-800 mb-2">Status</h3>
+        <h3 className="text-lg font-semibold text-blue-800 mb-2">stage</h3>
         <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          value={stage}
+          onChange={(e) => setstage(e.target.value)}
           className="border border-gray-300 rounded-md px-3 py-2 mb-2 w-full bg-gray-100 text-gray-800 focus:outline-none focus:border-purple-500 focus:text-black"
         >
           <option value="todo">Todo</option>
@@ -101,6 +130,7 @@ const TaskForm = ({ addTask, setShowForm }) => {
           <button
             type="submit"
             className="bg-blue-600 hover:bg-green-600 text-white px-4 py-2 rounded-md mr-2"
+            onClick={handleSubmit}
           >
             Add Task
           </button>
