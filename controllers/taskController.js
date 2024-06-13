@@ -4,7 +4,16 @@ import Task from "../models/Task.js";
 // Read all tasks
 export const fetchTasks = async (req, res) => {
   try {
-    const tasks = await Task.find();
+    // console.log(`email: ${req.headers["email"]}`);
+    const email = req.headers["email"];
+    const user = await User.findOne({ email });
+    console.log(`user: ${user}`);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const tasks = await Task.find({ user_id: user._id });
+    // console.log(`tasks: ${tasks}`);
 
     res.status(200).json({ message: tasks });
   } catch (err) {
@@ -23,8 +32,8 @@ export const getAddTask = (req, res) => {
 export const postAddTask = async (req, res) => {
   console.log("inside postAddTask");
   try {
-    let { title, description, due, stage, email } = req.body;
-    console.log(`email: ${email}`);
+    let { title, description, dueDate, stage, email } = req.body;
+
     const userExist = await User.findOne({ email });
     console.log(`userExist: ${userExist}`);
     if (!userExist) {
@@ -37,7 +46,7 @@ export const postAddTask = async (req, res) => {
     const newTask = await Task.create({
       title,
       description,
-      due,
+      due: dueDate,
       stage,
       user_id: userExist._id,
     });
