@@ -101,13 +101,13 @@ const Task = () => {
     }
   };
 
-  if (tasks.length === 0) {
-    return (
-      <div className="w-full h-full mt-32 justify-center items-center">
-        <NoTaskComponent />
-      </div>
-    );
-  }
+  // if (tasks.length === 0) {
+  //   return (
+  //     <div className="w-full h-full mt-32 justify-center items-center">
+  //       <NoTaskComponent />
+  //     </div>
+  //   );
+  // }
 
   return loading ? (
     <div className="py-10">
