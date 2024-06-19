@@ -38,9 +38,10 @@ const Login = () => {
         //navigate("/dashboard");
       } else {
         alert("Token not found in response");
+        toast.error(response.data.message || "Login failed");
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      toast.error(error.response.data.message || "Login failed");
     }
   };
 

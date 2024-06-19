@@ -28,10 +28,13 @@ const Register = () => {
       });
       if (response.status === 200) {
         navigate("/login");
+      } else {
+        toast.error(response.data.message);
       }
       // alert(response.data.message);
       toast.success(response.data.message);
     } catch (error) {
+      toast.error(error.response.data.message || "Registration failed");
       console.error("Registration failed:", error);
     }
   };
