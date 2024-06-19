@@ -1,7 +1,11 @@
-import express from "express";
-import authRouter from "./routes/authRouter.js";
-import taskRouter from "./routes/taskRouter.js";
-import cors from "cors";
+// import express from "express";
+// import authRouter from "./routes/authRouter.js";
+// import taskRouter from "./routes/taskRouter.js";
+// import cors from "cors";
+const express = require('express');
+const authRouter = require('./routes/authRouter');
+const taskRouter = require('./routes/taskRouter');
+const cors = require('cors');
 
 const port = 8080;
 

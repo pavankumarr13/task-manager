@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const uri =
   "mongodb+srv://pavankumar:hFjX5XX5m1gHMRuj@cluster0.mjpprdg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -32,4 +33,5 @@ const AuthSchema = new mongoose.Schema(
 
 const User = mongoose.model("User", AuthSchema);
 
-export default User;
+// export default User;
+module.exports = User;

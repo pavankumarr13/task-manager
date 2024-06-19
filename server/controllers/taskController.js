@@ -1,8 +1,10 @@
-import User from "../models/Auth.js";
-import Task from "../models/Task.js";
+// import User from "../models/Auth.js";
+// import Task from "../models/Task.js";
+const User = require('../models/Auth');
+const Task = require('../models/Task');
 
 // Read all tasks
-export const fetchTasks = async (req, res) => {
+ const fetchTasks = async (req, res) => {
   try {
     const tasks = await Task.find();
 
@@ -14,13 +16,13 @@ export const fetchTasks = async (req, res) => {
 };
 
 // Getting create task page
-export const getAddTask = (req, res) => {
+ const getAddTask = (req, res) => {
   // For testing in browser
   res.render("createTask");
 };
 
 // Creating a new task
-export const postAddTask = async (req, res) => {
+ const postAddTask = async (req, res) => {
   console.log("inside postAddTask");
   try {
     let { title, description, due, stage, email } = req.body;
@@ -49,12 +51,12 @@ export const postAddTask = async (req, res) => {
   }
 };
 
-export const getUpdateTask = (req, res) => {
+ const getUpdateTask = (req, res) => {
   // For testing in browser
   res.render("updateTask");
 };
 
-export const patchUpdateTask = async (req, res) => {
+ const patchUpdateTask = async (req, res) => {
   try {
     const taskId = req.params.id; // Assuming taskId is provided in the request parameters
 
@@ -93,7 +95,7 @@ export const patchUpdateTask = async (req, res) => {
   }
 };
 
-export const deleteTask = async (req, res) => {
+ const deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
 
@@ -114,3 +116,12 @@ export const deleteTask = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+module.exports = {
+  fetchTasks,
+  getAddTask,
+  postAddTask,
+  patchUpdateTask,
+  getUpdateTask,
+  deleteTask
+}

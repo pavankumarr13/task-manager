@@ -1,7 +1,11 @@
-import User from "../models/Auth.js";
-import bcrypt from "bcryptjs";
-import { LocalStorage } from "node-localstorage";
-import jwt from "jsonwebtoken";
+// import User from "../models/Auth.js";
+// import bcrypt from "bcryptjs";
+// import { LocalStorage } from "node-localstorage";
+// import jwt from "jsonwebtoken";
+const User = require('../models/Auth');
+const bcrypt = require('bcryptjs');
+const {LocalStorage} = require('node-localstorage');
+const jwt = require('jsonwebtoken');
 
 const localstorage = new LocalStorage("./scratch");
 const SECRET_KEY = "af891bf8da99d19ba13ed08024";
@@ -94,7 +98,7 @@ const validateToken = (req, res) => {
   }
 };
 
-export {
+module.exports =  {
   registerGet,
   registerPost,
   loginGet,
